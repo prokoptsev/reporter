@@ -26,7 +26,36 @@ class Application(object):
         self.window.set_position(gtk.WIN_POS_CENTER)
         self.window.set_title(title)
         self.create_widgets()
+        self.create_accel()
         self.window.show_all()
+
+    def create_accel(self):
+        # Создаём группу ускорителей
+        accelgroup = gtk.AccelGroup()
+
+        # Add the accelerator group to the toplevel window
+        self.window.add_accel_group(accelgroup)
+
+        # Создаём действие для автосохранения и выхода из программы
+        auto_save = gtk.Action("Auto-Save", None, None, gtk.STOCK_SAVE)
+
+        # Connect a callback to the action
+        auto_save.connect('activate', self.save_report)
+
+        # Создаём группу действий под названием SimpleAction
+        actiongroup = gtk.ActionGroup('SimpleAction')
+
+        # Добавляем в группу действие с ускорителем
+        # None означает что мы используем stock item accelerator
+        actiongroup.add_action_with_accel(auto_save, None)
+
+        # Have the action use accelgroup
+        auto_save.set_accel_group(accelgroup)
+
+        # Подключаем ускоритель к действию
+        auto_save.connect_accelerator()
+        # Подключаем действие к доверенному виджету
+        auto_save.connect_proxy(self.save_btn)
 
     def skip_report(self):
         with database.transaction():
@@ -37,8 +66,8 @@ class Application(object):
         self.quit(self.window)
 
     def save_report(self, widget):
-        textbuffer = self.report.get_buffer()
-        report_data = textbuffer.get_text(*textbuffer.get_bounds())
+        text_buffer = self.report.get_buffer()
+        report_data = text_buffer.get_text(*text_buffer.get_bounds())
         with database.transaction():
             Report.create(
                 report=report_data,
@@ -60,11 +89,12 @@ class Application(object):
 
         self.report = gtk.TextView()
         self.report.set_wrap_mode(gtk.WRAP_WORD_CHAR)
+        # self.report.connect('key-release-event', self.report_event)
         vbox.pack_start(self.report)
 
-        save_btn = gtk.Button("Сохранить")
-        save_btn.connect('clicked', self.save_report)
-        vbox.pack_start(save_btn, False, padding=self.pagging)
+        self.save_btn = gtk.Button("Сохранить")
+        self.save_btn.connect('clicked', self.save_report)
+        vbox.pack_start(self.save_btn, False, padding=self.pagging)
 
     def quit(self, widget):
         gtk.main_quit()
