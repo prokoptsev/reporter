@@ -11,7 +11,7 @@ from model import Report, database
 
 
 class Application(object):
-    pagging = 10
+    padding = 10
     date_format = "%d %b %H:%M"
 
     def __init__(self, title, width=400, height=300):
@@ -22,7 +22,7 @@ class Application(object):
         self.window = gtk.Window()
         self.window.connect("destroy", self.quit)
         self.window.set_size_request(width, height)
-        self.window.set_border_width(self.pagging)
+        self.window.set_border_width(self.padding)
         self.window.set_position(gtk.WIN_POS_CENTER)
         self.window.set_title(title)
         self.create_widgets()
@@ -79,13 +79,33 @@ class Application(object):
         vbox = gtk.VBox()
         self.window.add(vbox)
 
-        label_created = gtk.Label("Время создания отчета: {}".format(
-            self.datetime_create.strftime(self.date_format)))
-        vbox.pack_start(label_created, False)
+        last_frame = gtk.Frame()
+        label_frame = gtk.Label("<b>Прошлый отчет</b>")
+        label_frame.set_use_markup(True)
+        last_frame.set_label_widget(label_frame)
+        last_vbox = gtk.VBox()
+        last_frame.add(last_vbox)
+        vbox.pack_start(last_frame, False)
 
-        label_last_report = gtk.Label("Последний отчет создан: {}".format(
+        label_last_report_time = gtk.Label("<b>Cоздан:</b> {}".format(
             Report.get_last_report_time(self.date_format)))
-        vbox.pack_start(label_last_report, False, padding=self.pagging)
+        label_last_report_time.set_alignment(0, .5)
+        label_last_report_time.set_use_markup(True)
+        last_vbox.pack_start(label_last_report_time, False)
+
+        label_last_report = gtk.Label("<b>Содержание:</b>")
+        label_last_report.set_alignment(0, .5)
+        label_last_report.set_use_markup(True)
+        last_vbox.pack_start(label_last_report, False)
+
+        last_report = gtk.Label(Report.get_last_report())
+        last_report.set_alignment(0, .5)
+        last_vbox.pack_start(last_report, False)
+
+        label_created = gtk.Label("Текущий отчет: {}".format(
+            self.datetime_create.strftime(self.date_format)))
+        label_created.set_alignment(0, .5)
+        vbox.pack_start(label_created, False, padding=self.padding)
 
         self.report = gtk.TextView()
         self.report.set_wrap_mode(gtk.WRAP_WORD_CHAR)
@@ -94,7 +114,7 @@ class Application(object):
 
         self.save_btn = gtk.Button("Сохранить")
         self.save_btn.connect('clicked', self.save_report)
-        vbox.pack_start(self.save_btn, False, padding=self.pagging)
+        vbox.pack_start(self.save_btn, False, padding=self.padding)
 
     def quit(self, widget):
         gtk.main_quit()
