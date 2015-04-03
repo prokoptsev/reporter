@@ -1,0 +1,42 @@
+<!doctype html>
+<head>
+    <meta charset="UTF-8">
+    <title>Отчеты</title>
+</head>
+<body style="padding: 50px">
+    <!--<div style="padding: 10em">-->
+        <h1>Отчеты</h1>
+        <p>Сегодня {{ today }}</p>
+
+        <form action="" method="GET">
+            <ul style="list-style-type: none;">
+                {% for filter_name, filter_values in filters %}
+                    <li><input type="radio" name="from" value="{{ filter_values }}">{{ filter_name }}</li>
+                {% endfor %}
+            </ul>
+
+            <label for="from">с</label>
+            <input id="from" name="from" type="text"/>
+            <label for="to">по</label>
+            <input id="to" name="to" type="text"/>
+            <input type="submit" value="фильтровать"/>
+        </form>
+        <table width="100%">
+            <thead>
+                <tr>
+                    <th width="300px" style="border-bottom:1px black solid;">Время</th>
+                    <th style="border-bottom:1px black solid;">Текст</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for report in reports %}
+                    <tr>
+                        <td>{{ report.created|dtformat }}</td>
+                        <td>{{ report.report }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>

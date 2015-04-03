@@ -1,8 +1,13 @@
 # coding: utf-8
 from __future__ import unicode_literals
+from os import path
+
 import peewee as pw
 
-database = pw.SqliteDatabase('database.db')
+database = pw.SqliteDatabase(path.join(
+    path.dirname(path.abspath(__file__)),
+    'database.db'
+))
 
 
 class Report(pw.Model):
