@@ -26,3 +26,8 @@ class Report(pw.Model):
     def get_last_report_time(cls, date_format):
         last_report = cls.select().first()
         return last_report and last_report.created.strftime(date_format) or '--'
+
+    @classmethod
+    def get_last_report(cls):
+        last_report = cls.select().first()
+        return last_report.report or ''
