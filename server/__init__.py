@@ -13,22 +13,25 @@ _format = "%d.%m.%Y"
 filters = OrderedDict((
     ('today', {
         "title": "Сегодня",
-        "value": datetime.combine(date.today(), time())
+        "from": datetime.combine(date.today(), time()),
+        "to": datetime.now()
     }),
     ('yesterday', {
         "title": "Последние 2 дня",
-        "value": datetime.combine(date.today(), time()) - timedelta(days=1)
+        "from": datetime.combine(date.today(), time()) - timedelta(days=1),
+        "to": datetime.combine(date.today(), time())
     }),
-    ('lastweek', {
+    ('week', {
         "title": "За неделю",
-        "value": datetime.combine(date.today(), time()) - timedelta(days=7)
+        "from": datetime.combine(date.today(), time()) - timedelta(days=7),
+        "to": datetime.now()
     })
 ))
 
 
 def _check(_date):
     if not isinstance(_date, datetime):
-        if isinstance(_date, (basestring)):
+        if isinstance(_date, basestring):
             dates = _date.split('.')
             if all(i.isdigit() for i in dates):
                 if len(dates) == 1:
@@ -53,7 +56,8 @@ def index():
     _to = request.args.get('to') or datetime.now()
     default_filter = filters.get(_from)
     if default_filter:
-        _from = default_filter['value']
+        _from = default_filter['from']
+        _to = default_filter['to']
     _from, _to = _check(_from), _check(_to)
 
     if _from > _to:

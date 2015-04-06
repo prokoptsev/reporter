@@ -30,7 +30,7 @@
             </thead>
             <tbody>
                 {% for report in reports %}
-                    <tr>
+                    <tr {% if report.is_missed %}style="background: yellow"{% endif %}>
                         <td>{{ report.created|dtformat }}</td>
                         <td>{{ report.report }}</td>
                     </tr>
