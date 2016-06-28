@@ -1,5 +1,3 @@
-# coding: utf-8
-from __future__ import unicode_literals
 from collections import OrderedDict
 from datetime import datetime, time, date, timedelta
 from flask import Flask, request, render_template, abort
@@ -66,7 +64,7 @@ def index():
     return render_template(
         "index.html",
         reports=reports,
-        filters=((title['title'], value) for value, title in filters.iteritems()),
+        filters=((title['title'], value) for value, title in filters.items()),
         today=date.today().strftime(_format)
     )
 
